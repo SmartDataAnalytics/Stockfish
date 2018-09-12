@@ -154,6 +154,15 @@ inline Bitboard file_bb(Square s) {
   return FileBB[file_of(s)];
 }
 
+// (make it possible to make the Board smaller)
+inline Bitboard FileFirstBB() {return FileBB[FILE_FIRST];}
+inline Bitboard FileLastBB() {return FileBB[FILE_LAST];}
+inline Bitboard RankFirstBB() { return RankBB[RANK_FIRST];}
+inline Bitboard RankLastBB() { return RankBB[RANK_LAST];}
+inline Bitboard FileSecFirstBB() {return FileBB[FILE_FIRST] << 1;}
+inline Bitboard FileSecLastBB() {return FileBB[FILE_LAST] >> 1;}
+inline Bitboard RankSecFirstBB() { return RankBB[RANK_FIRST] << 8;}
+inline Bitboard RankSecLastBB() { return RankBB[RANK_LAST] >> 8;}
 
 /// shift() moves a bitboard one step along direction D (mainly for pawns)
 
