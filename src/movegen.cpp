@@ -74,7 +74,7 @@ namespace {
     if (Type == QUIETS || Type == EVASIONS || Type == NON_EVASIONS)
     {
         *moveList++ = make<PROMOTION>(to - D, to, ROOK);
-        *moveList++ = make<PROMOTION>(to - D, to, BISHOP);
+        //*moveList++ = make<PROMOTION>(to - D, to, BISHOP);
         *moveList++ = make<PROMOTION>(to - D, to, KNIGHT);
     }
 
@@ -94,9 +94,9 @@ namespace {
 
     // Compute our parametrized parameters at compile time, named according to
     // the point of view of white side.
-    constexpr Color     Them     = (Us == WHITE ? BLACK      : WHITE);
-    constexpr Bitboard  TRank8BB = (Us == WHITE ? Rank8BB    : Rank1BB);
-    constexpr Bitboard  TRank7BB = (Us == WHITE ? Rank7BB    : Rank2BB);
+    const Color    Them     = (Us == WHITE ? BLACK           : WHITE);
+    const Bitboard TRank8BB = (Us == WHITE ? RankLastBB()    : RankFirstBB());
+    const Bitboard TRank7BB = (Us == WHITE ? RankSecLastBB() : RankSecFirstBB());
     constexpr Bitboard  TRank3BB = (Us == WHITE ? Rank3BB    : Rank6BB);
     constexpr Direction Up       = (Us == WHITE ? NORTH      : SOUTH);
     constexpr Direction UpRight  = (Us == WHITE ? NORTH_EAST : SOUTH_WEST);
@@ -235,6 +235,7 @@ namespace {
 
     for (Square from = *pl; from != SQ_NONE; from = *++pl)
     {
+        if(is_in_alamos(from)) {
         if (Checks)
         {
             if (    (Pt == BISHOP || Pt == ROOK || Pt == QUEEN)
@@ -250,8 +251,11 @@ namespace {
         if (Checks)
             b &= pos.check_squares(Pt);
 
-        while (b)
-            *moveList++ = make_move(from, pop_lsb(&b));
+        while (b) {
+            Square to = pop_lsb(&b);
+            if(is_in_alamos(to)) *moveList++ = make_move(from, to);
+        }
+        }
     }
 
     return moveList;
@@ -273,8 +277,10 @@ namespace {
     {
         Square ksq = pos.square<KING>(Us);
         Bitboard b = pos.attacks_from<KING>(ksq) & target;
-        while (b)
-            *moveList++ = make_move(ksq, pop_lsb(&b));
+        while (b) {
+            Square to = pop_lsb(&b);
+            if(is_in_alamos(to)) *moveList++ = make_move(ksq, to);
+        }
     }
 
     if (Type != CAPTURES && Type != EVASIONS && pos.can_castle(Us))
@@ -343,6 +349,7 @@ ExtMove* generate<QUIET_CHECKS>(const Position& pos, ExtMove* moveList) {
      Square from = pop_lsb(&dc);
      PieceType pt = type_of(pos.piece_on(from));
 
+     if(is_in_alamos(from)) {
      if (pt == PAWN)
          continue; // Will be generated together with direct checks
 
@@ -351,8 +358,11 @@ ExtMove* generate<QUIET_CHECKS>(const Position& pos, ExtMove* moveList) {
      if (pt == KING)
          b &= ~PseudoAttacks[QUEEN][pos.square<KING>(~us)];
 
-     while (b)
-         *moveList++ = make_move(from, pop_lsb(&b));
+     while (b) {
+         Square to = pop_lsb(&b);
+         if(is_in_alamos(to)) *moveList++ = make_move(from, to);
+     }
+        }
   }
 
   return us == WHITE ? generate_all<WHITE, QUIET_CHECKS>(pos, moveList, ~pos.pieces())
@@ -383,8 +393,12 @@ ExtMove* generate<EVASIONS>(const Position& pos, ExtMove* moveList) {
 
   // Generate evasions for king, capture and non capture moves
   Bitboard b = pos.attacks_from<KING>(ksq) & ~pos.pieces(us) & ~sliderAttacks;
-  while (b)
-      *moveList++ = make_move(ksq, pop_lsb(&b));
+  if(is_in_alamos(ksq)) {
+    while (b) {
+        Square to = pop_lsb(&b);
+        if(is_in_alamos(to)) *moveList++ = make_move(ksq, to);
+    }
+  }
 
   if (more_than_one(pos.checkers()))
       return moveList; // Double check, only a king move can save the day
