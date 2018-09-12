@@ -214,7 +214,7 @@ namespace {
 
             b1 = pawnsNotOn7 & pos.attacks_from<PAWN>(pos.ep_square(), Them);
 
-            assert(b1);
+            //assert(b1);
 
             while (b1)
                 *moveList++ = make<ENPASSANT>(pop_lsb(&b1), pos.ep_square());
