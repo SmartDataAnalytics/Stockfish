@@ -457,6 +457,16 @@ constexpr Move make(Square from, Square to, PieceType pt = KNIGHT) {
   return Move(T + ((pt - KNIGHT) << 12) + (from << 6) + to);
 }
 
+//inline bool is_in_gardner(Square s) { return (!(rank_of(s) == RANK_8 || rank_of(s) == RANK_1||rank_of(s) == RANK_7||file_of(s) == FILE_A ||file_of(s) == FILE_G || file_of(s) == FILE_H));}
+
+const Rank RANK_FIRST = RANK_2;
+const Rank RANK_LAST = RANK_6;
+const File FILE_FIRST = FILE_C;
+const File FILE_LAST = FILE_F;
+inline bool is_in_alamos(Square s) { return (rank_of(s) <= RANK_LAST && rank_of(s) >= RANK_FIRST && file_of(s) >= FILE_FIRST && file_of(s) <= FILE_LAST);}
+ 
+const int TB_pieceNum = 5;
+
 constexpr bool is_ok(Move m) {
   return from_sq(m) != to_sq(m); // Catch MOVE_NULL and MOVE_NONE
 }
