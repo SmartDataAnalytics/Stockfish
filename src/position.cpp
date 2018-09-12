@@ -59,6 +59,7 @@ template<int Pt>
 PieceType min_attacker(const Bitboard* byTypeBB, Square to, Bitboard stmAttackers,
                        Bitboard& occupied, Bitboard& attackers) {
 
+    if(is_in_alamos(to)) {
   Bitboard b = stmAttackers & byTypeBB[Pt];
   if (!b)
       return min_attacker<Pt + 1>(byTypeBB, to, stmAttackers, occupied, attackers);
@@ -78,6 +79,7 @@ PieceType min_attacker(const Bitboard* byTypeBB, Square to, Bitboard stmAttacker
   // the rook example, now attackers contains _again_ rook in a7, so remove it.
   attackers &= occupied;
   return (PieceType)Pt;
+                       } else return KING;
 }
 
 template<>
@@ -567,12 +569,12 @@ bool Position::legal(Move m) const {
   // square is attacked by the opponent. Castling moves are checked
   // for legality during move generation.
   if (type_of(piece_on(from)) == KING)
-      return type_of(m) == CASTLING || !(attackers_to(to_sq(m)) & pieces(~us));
+      return (type_of(m) == CASTLING || !(attackers_to(to_sq(m)) & pieces(~us))) && (is_in_alamos(to_sq(m)));
 
   // A non-king move is legal if and only if it is not pinned or it
   // is moving along the ray towards or away from the king.
-  return   !(blockers_for_king(us) & from)
-        ||  aligned(from, to_sq(m), square<KING>(us));
+  return   (!(blockers_for_king(us) & from)
+        ||  aligned(from, to_sq(m), square<KING>(us))) && (is_in_alamos(to_sq(m)));
 }
 
 
@@ -657,6 +659,7 @@ bool Position::gives_check(Move m) const {
 
   Square from = from_sq(m);
   Square to = to_sq(m);
+    if(!is_in_alamos(to)) return false;
 
   // Is there a direct check?
   if (st->checkSquares[type_of(piece_on(from))] & to)
@@ -1099,6 +1102,11 @@ bool Position::see_ge(Move m, Value threshold) const {
 /// or by repetition. It does not detect stalemates.
 
 bool Position::is_draw(int ply) const {
+
+  // EXTRA! Draw by material
+  /*if (   !pieces(PAWN)
+      && (non_pawn_material(WHITE) + non_pawn_material(BLACK) <= BishopValueMg))
+      return true;*/
 
   if (st->rule50 > 99 && (!checkers() || MoveList<LEGAL>(*this).size()))
       return true;
