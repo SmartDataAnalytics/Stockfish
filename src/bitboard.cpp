@@ -174,7 +174,7 @@ namespace {
         {
             attack |= s;
 
-            if (occupied & s)
+            if ((occupied & s)||(is_in_alamos(s))
                 break;
         }
 
