@@ -236,25 +236,25 @@ namespace {
     for (Square from = *pl; from != SQ_NONE; from = *++pl)
     {
         if(is_in_alamos(from)) {
-        if (Checks)
-        {
-            if (    (Pt == BISHOP || Pt == ROOK || Pt == QUEEN)
-                && !(PseudoAttacks[Pt][from] & target & pos.check_squares(Pt)))
-                continue;
+            if (Checks)
+            {
+                if (    (Pt == BISHOP || Pt == ROOK || Pt == QUEEN)
+                    && !(PseudoAttacks[Pt][from] & target & pos.check_squares(Pt)))
+                    continue;
 
-            if (pos.blockers_for_king(~us) & from)
-                continue;
-        }
+                if (pos.blockers_for_king(~us) & from)
+                    continue;
+            }
 
-        Bitboard b = pos.attacks_from<Pt>(from) & target;
+            Bitboard b = pos.attacks_from<Pt>(from) & target;
 
-        if (Checks)
-            b &= pos.check_squares(Pt);
+            if (Checks)
+                b &= pos.check_squares(Pt);
 
-        while (b) {
-            Square to = pop_lsb(&b);
-            if(is_in_alamos(to)) *moveList++ = make_move(from, to);
-        }
+            while (b) {
+                Square to = pop_lsb(&b);
+                if(is_in_alamos(to)) *moveList++ = make_move(from, to);
+            }
         }
     }
 
