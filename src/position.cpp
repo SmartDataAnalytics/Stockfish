@@ -192,6 +192,7 @@ void Position::init() {
                   count++;
              }
   //assert(count == 3668);
+  assert(count == 2232);
 }
 
 
@@ -293,7 +294,7 @@ Position& Position::set(const string& fenStr, bool isChess960, StateInfo* si, Th
       else
           continue;
 
-      set_castling_right(c, rsq);
+      //set_castling_right(c, rsq);
   }
 
   // 4. En passant square. Ignore if no pawn capture is possible
@@ -830,7 +831,9 @@ void Position::do_move(Move m, StateInfo& newSt, bool givesCheck) {
       {
           Piece promotion = make_piece(us, promotion_type(m));
 
-          //assert(relative_rank(us, to) == RANK_8);
+          Rank rank = std::min(relative_rank(us, to), RANK_LAST);
+
+          assert(rank==RANK_LAST);
           assert(type_of(promotion) >= KNIGHT && type_of(promotion) <= QUEEN);
 
           remove_piece(pc, to);
@@ -891,7 +894,8 @@ void Position::undo_move(Move m) {
 
   if (type_of(m) == PROMOTION)
   {
-      //assert(relative_rank(us, to) == RANK_8);
+    Rank rank = std::min(relative_rank(us, to), RANK_LAST);
+      assert(rank == RANK_LAST);
       assert(type_of(pc) == promotion_type(m));
       assert(type_of(pc) >= KNIGHT && type_of(pc) <= QUEEN);
 

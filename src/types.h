@@ -461,7 +461,7 @@ constexpr Move make(Square from, Square to, PieceType pt = KNIGHT) {
 
 const Rank RANK_FIRST = RANK_2;
 const Rank RANK_LAST = RANK_6;
-const File FILE_FIRST = FILE_C;
+const File FILE_FIRST = FILE_B;
 const File FILE_LAST = FILE_F;
 inline bool is_in_alamos(Square s) { return (rank_of(s) <= RANK_LAST && rank_of(s) >= RANK_FIRST && file_of(s) >= FILE_FIRST && file_of(s) <= FILE_LAST);}
  
