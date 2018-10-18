@@ -831,9 +831,12 @@ void Position::do_move(Move m, StateInfo& newSt, bool givesCheck) {
       {
           Piece promotion = make_piece(us, promotion_type(m));
 
-          Rank rank = std::min(relative_rank(us, to), RANK_LAST);
+          // Additional offset for boards with odd height
+          constexpr int BOARD_HEIGHT = RANK_LAST - RANK_FIRST + 1;
+          constexpr bool BOARD_ODD = BOARD_HEIGHT % 2 != 0;
+          int OFFSET = BOARD_ODD * (1 * us);
 
-          assert(rank==RANK_LAST);
+          assert(relative_rank(us, to) + OFFSET == RANK_LAST);
           assert(type_of(promotion) >= KNIGHT && type_of(promotion) <= QUEEN);
 
           remove_piece(pc, to);
@@ -894,8 +897,12 @@ void Position::undo_move(Move m) {
 
   if (type_of(m) == PROMOTION)
   {
-    Rank rank = std::min(relative_rank(us, to), RANK_LAST);
-      assert(rank == RANK_LAST);
+      // Additional offset for boards with odd height
+      constexpr int BOARD_HEIGHT = RANK_LAST - RANK_FIRST + 1;
+      constexpr bool BOARD_ODD = BOARD_HEIGHT % 2 != 0;
+      int OFFSET = BOARD_ODD * (1 * us);
+
+      assert(relative_rank(us, to) + OFFSET == RANK_LAST);
       assert(type_of(pc) == promotion_type(m));
       assert(type_of(pc) >= KNIGHT && type_of(pc) <= QUEEN);
 
