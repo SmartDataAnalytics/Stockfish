@@ -30,6 +30,7 @@
 #include "thread.h"
 #include "timeman.h"
 #include "tt.h"
+#include "types.h"
 #include "uci.h"
 #include "syzygy/tbprobe.h"
 
@@ -99,6 +100,11 @@ namespace {
         Options[name] = value;
     else
         sync_cout << "No such option: " << name << sync_endl;
+
+    if(name == "BoardWidth")
+      UCI::set_board_width(std::stoi(value));
+    if(name == "BoardHeight")
+      UCI::set_board_height(std::stoi(value));
   }
 
 
@@ -314,3 +320,24 @@ Move UCI::to_move(const Position& pos, string& str) {
 
   return MOVE_NONE;
 }
+
+/// UCI::set_board_width() sets the chessboard's width.
+
+void UCI::set_board_width(const int &width) {
+    Borders::FILE_FIRST = File(4 - width/2 - (width % 2));
+    Borders::FILE_LAST = File(4 + width/2 - 1);
+}
+
+/// UCI::set_board_height() sets the chessboard's height.
+
+void UCI::set_board_height(const int &height) {
+    Borders::RANK_FIRST = Rank(4 - height/2 - (height % 2));
+    Borders::RANK_LAST = Rank(4 + height/2 - 1);
+}
+
+/// Default values for chessboard size.
+
+Rank Borders::RANK_LAST = RANK_7;
+Rank Borders::RANK_FIRST = RANK_2;
+File Borders::FILE_FIRST = FILE_B;
+File Borders::FILE_LAST = FILE_G;

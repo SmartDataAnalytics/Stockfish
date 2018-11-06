@@ -459,11 +459,20 @@ constexpr Move make(Square from, Square to, PieceType pt = KNIGHT) {
 
 //inline bool is_in_gardner(Square s) { return (!(rank_of(s) == RANK_8 || rank_of(s) == RANK_1||rank_of(s) == RANK_7||file_of(s) == FILE_A ||file_of(s) == FILE_G || file_of(s) == FILE_H));}
 
-const Rank RANK_FIRST = RANK_2;
-const Rank RANK_LAST = RANK_7;
-const File FILE_FIRST = FILE_B;
-const File FILE_LAST = FILE_G;
-inline bool is_in_alamos(Square s) { return (rank_of(s) <= RANK_LAST && rank_of(s) >= RANK_FIRST && file_of(s) >= FILE_FIRST && file_of(s) <= FILE_LAST);}
+class Borders {
+ public:
+  static Rank RANK_FIRST;
+  static Rank RANK_LAST;
+  static File FILE_FIRST;
+  static File FILE_LAST;
+};
+
+inline bool is_in_alamos(Square s) {
+  return (rank_of(s) <= Borders::RANK_LAST
+  && rank_of(s) >= Borders::RANK_FIRST
+  && file_of(s) >= Borders::FILE_FIRST
+  && file_of(s) <= Borders::FILE_LAST);
+}
  
 const int TB_pieceNum = 5;
 
