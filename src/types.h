@@ -43,6 +43,7 @@
 #include <climits>
 #include <cstdint>
 #include <cstdlib>
+#include <map>
 
 #if defined(_MSC_VER)
 // Disable some silly and noisy warning from MSVC compiler
@@ -465,6 +466,21 @@ class Borders {
   static Rank RANK_LAST;
   static File FILE_FIRST;
   static File FILE_LAST;
+};
+
+class PieceList {
+ public:
+  static bool in_use(PieceType P) {
+    return m[P];
+  }
+  static void use(PieceType P) {
+    m[P] = true;
+  }
+  static void do_not_use(PieceType P) {
+    m[P] = false;
+  }
+ private:
+  static std::map<PieceType, bool> m;
 };
 
 inline bool is_in_alamos(Square s) {

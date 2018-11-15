@@ -23,6 +23,7 @@
 
 #include <map>
 #include <string>
+#include <vector>
 
 #include "types.h"
 
@@ -74,6 +75,7 @@ std::string square(Square s);
 std::string move(Move m, bool chess960);
 std::string pv(const Position& pos, Depth depth, Value alpha, Value beta);
 Move to_move(const Position& pos, std::string& str);
+
 void set_board_width(const int &width);
 void set_board_height(const int &height);
 

@@ -341,3 +341,14 @@ Rank Borders::RANK_LAST = RANK_7;
 Rank Borders::RANK_FIRST = RANK_2;
 File Borders::FILE_FIRST = FILE_B;
 File Borders::FILE_LAST = FILE_G;
+
+/// Default values for pieces in use.
+
+std::map<PieceType, bool> PieceList::m = {
+    {ROOK, true},
+    {BISHOP, false},
+    {KNIGHT, true},
+    {KING, true},
+    {QUEEN, true},
+    {PAWN, true}
+};
