@@ -346,7 +346,7 @@ File Borders::FILE_LAST = FILE_G;
 
 std::map<PieceType, bool> PieceList::m = {
     {ROOK, true},
-    {BISHOP, false},
+    {BISHOP, true},
     {KNIGHT, true},
     {KING, true},
     {QUEEN, true},

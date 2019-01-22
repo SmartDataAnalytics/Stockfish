@@ -20,6 +20,7 @@
 
 #include <algorithm>
 #include <cassert>
+#include <iostream>
 
 #include "bitboard.h"
 #include "endgame.h"
@@ -535,6 +536,14 @@ ScaleFactor Endgame<KRPKB>::operator()(const Position& pos) const {
 /// pawns and the defending king is actively placed, the position is drawish.
 template<>
 ScaleFactor Endgame<KRPPKRP>::operator()(const Position& pos) const {
+
+  if (!verify_material(pos, strongSide, RookValueMg, 2))
+  {
+    StateInfo sf = *pos.st;
+    std::cout << pos.non_pawn_material(strongSide) << " - " << pos.count<ROOK>(strongSide) << std::endl;
+    std::cout << pos << std::endl;
+
+  }
 
   assert(verify_material(pos, strongSide, RookValueMg, 2));
   assert(verify_material(pos, weakSide,   RookValueMg, 1));

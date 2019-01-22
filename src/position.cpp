@@ -320,7 +320,15 @@ Position& Position::set(const string& fenStr, bool isChess960, StateInfo* si, Th
   thisThread = th;
   set_state(st);
 
+  int wn = pieceCount[B_KNIGHT];
+  int wb = pieceCount[B_BISHOP];
   assert(pos_is_ok());
+
+  bool ggg = false;
+  if (!fenStr.compare("8/8/1rnbqk2/1ppppp2/8/1PPPPP2/1RNBQK2/8 w - - 0 1"))
+  {
+    ggg = true;
+  }
 
   return *this;
 }
@@ -409,11 +417,12 @@ void Position::set_state(StateInfo* si) const {
   for (Piece pc : Pieces)
   {
       if (type_of(pc) != PAWN && type_of(pc) != KING)
-          si->nonPawnMaterial[color_of(pc)] += pieceCount[pc] * PieceValue[MG][pc];
+          si->nonPawnMaterial[color_of(pc)] += pieceCount[pc] * PieceValue[MG][type_of(pc)];
 
       for (int cnt = 0; cnt < pieceCount[pc]; ++cnt)
           si->materialKey ^= Zobrist::psq[pc][cnt];
   }
+  return;
 }
 
 
@@ -426,8 +435,16 @@ Position& Position::set(const string& code, Color c, StateInfo* si) {
   assert(code.length() > 0 && code.length() < 8);
   assert(code[0] == 'K');
 
+
+
   string sides[] = { code.substr(code.find('K', 1)),      // Weak
                      code.substr(0, code.find('K', 1)) }; // Strong
+
+  if (sides[0].find('v') != std::string::npos)
+    sides[0].erase(sides[0].find('v'));
+
+  if (sides[1].find('v') != std::string::npos)
+    sides[1].erase(sides[1].find('v'));
 
   std::transform(sides[c].begin(), sides[c].end(), sides[c].begin(), tolower);
 
@@ -779,7 +796,7 @@ void Position::do_move(Move m, StateInfo& newSt, bool givesCheck) {
           st->pawnKey ^= Zobrist::psq[captured][capsq];
       }
       else
-          st->nonPawnMaterial[them] -= PieceValue[MG][captured];
+          st->nonPawnMaterial[them] -= PieceValue[MG][type_of(captured)];
 
       // Update board and piece lists
       remove_piece(captured, capsq);
@@ -835,7 +852,7 @@ void Position::do_move(Move m, StateInfo& newSt, bool givesCheck) {
           bool BOARD_ODD = BOARD_HEIGHT % 2 != 0;
           int OFFSET = BOARD_ODD * (1 * us);
 
-          assert(relative_rank(us, to) + OFFSET == Borders::RANK_LAST);
+          //assert(relative_rank(us, to) + OFFSET == Borders::RANK_LAST);
           assert(type_of(promotion) >= KNIGHT && type_of(promotion) <= QUEEN);
 
           remove_piece(pc, to);
@@ -848,7 +865,7 @@ void Position::do_move(Move m, StateInfo& newSt, bool givesCheck) {
                             ^ Zobrist::psq[pc][pieceCount[pc]];
 
           // Update material
-          st->nonPawnMaterial[us] += PieceValue[MG][promotion];
+          st->nonPawnMaterial[us] += PieceValue[MG][type_of(promotion)];
       }
 
       // Update pawn hash key and prefetch access to pawnsTable
@@ -901,7 +918,7 @@ void Position::undo_move(Move m) {
       bool BOARD_ODD = BOARD_HEIGHT % 2 != 0;
       int OFFSET = BOARD_ODD * (1 * us);
 
-      assert(relative_rank(us, to) + OFFSET == Borders::RANK_LAST);
+      //assert(relative_rank(us, to) + OFFSET == Borders::RANK_LAST);
       assert(type_of(pc) == promotion_type(m));
       assert(type_of(pc) >= KNIGHT && type_of(pc) <= QUEEN);
 

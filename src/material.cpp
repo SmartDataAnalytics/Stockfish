@@ -21,6 +21,7 @@
 #include <algorithm> // For std::min
 #include <cassert>
 #include <cstring>   // For std::memset
+#include <iostream>
 
 #include "material.h"
 #include "thread.h"
@@ -176,6 +177,12 @@ Entry* probe(const Position& pos) {
   {
       if (!pos.count<PAWN>(BLACK))
       {
+        if (!(pos.count<PAWN>(WHITE) >= 2))
+        {
+          std::cout << npm_b << " - " << npm_w << std::endl;
+          std::cout << pos;
+        }
+
           assert(pos.count<PAWN>(WHITE) >= 2);
 
           e->scalingFunction[WHITE] = &ScaleKPsK[WHITE];

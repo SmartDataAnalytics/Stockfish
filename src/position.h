@@ -162,6 +162,8 @@ public:
   bool pos_is_ok() const;
   void flip();
 
+  StateInfo* st;
+
 private:
   // Initialization helpers (used while setting up a position)
   void set_castling_right(Color c, Square rfrom);
@@ -189,7 +191,7 @@ private:
   Color sideToMove;
   Score psq;
   Thread* thisThread;
-  StateInfo* st;
+  //StateInfo* st;
   bool chess960;
 };
 
