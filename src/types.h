@@ -489,8 +489,6 @@ inline bool is_in_alamos(Square s) {
   && file_of(s) >= Borders::FILE_FIRST
   && file_of(s) <= Borders::FILE_LAST);
 }
- 
-const int TB_pieceNum = 5;
 
 constexpr bool is_ok(Move m) {
   return from_sq(m) != to_sq(m); // Catch MOVE_NULL and MOVE_NONE
